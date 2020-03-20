@@ -17,6 +17,9 @@ defmodule Lab1.Application do
 
     opts = [strategy: :one_for_one]
     Supervisor.start_link(children, opts)
+
+    receive do
+    end
   end
 end
 
