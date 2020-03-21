@@ -3,12 +3,13 @@ defmodule Calculate do
   IO.inspect "aaa"
   end
 
-  @spec calculateAvg(nil | maybe_improper_list | map) :: any
   def calculateAvg(msg) do
-    items = msg["message"]
-    items = getTuple(items)
-    items = getMapList(items)
-    getMap(items)
+    data = msg["message"]
+    |> getTuple()
+    |> getMapList()
+    |> getMap()
+
+    data
   end
 
   def getTuple(items) do
@@ -36,7 +37,7 @@ defmodule Calculate do
     avgMap = Enum.reduce(mapList, fn x, y ->
       Map.merge(x, y, fn _k, v1, v2 -> v2 ++ v1 end)
     end)
-    IO.inspect(avgMap)
+    avgMap
   end
 
 end

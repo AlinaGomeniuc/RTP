@@ -9,10 +9,10 @@ defmodule MySupervisor do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  def start_child() do
+  def start_child(name) do
     children = %{
-      id: Calculate,
-      start: {Calculate, :start_link, []},
+      id: Forecast,
+      start: {Forecast, :start_link, [name]},
     }
 
     DynamicSupervisor.start_child(__MODULE__,children)

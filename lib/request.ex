@@ -1,20 +1,21 @@
 defmodule Request do
  def start_link(url) do
+    IO.inspect "Starting request"
     pid = spawn_link(__MODULE__, :getData, [])
     EventsourceEx.new(url, stream_to: pid)
 
     {:ok, pid}
   end
 
-  @spec getData :: no_return
   def getData() do
     receive do
         msg ->
             msg = (Poison.decode!(msg.data))
-            Calculate.calculateAvg(msg)
-
-        getData()
+            Root.distribute_data(msg)
+            # Calculate.calculateAvg(msg)
+            Process.sleep(100)
     end
+    getData()
   end
 
 end

@@ -8,10 +8,16 @@ defmodule Lab1.Application do
         start: {MySupervisor, :start_link, []}
       },
 
+      {Registry, [keys: :unique, name: :workers_registry]},
+
       %{
         id: Request,
-        start: {Request, :start_link, ["http://localhost:4000/iot"]},
-        restart: :permanent
+        start: {Request, :start_link, ["http://localhost:4000/iot"]}
+      },
+
+      %{
+        id: Root,
+        start: {Root, :start_link, [10]},
       }
     ]
 

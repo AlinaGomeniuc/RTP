@@ -2,8 +2,9 @@
              [{applications,[kernel,stdlib,elixir,logger,poison,
                              eventsource_ex]},
               {description,"lab1"},
-              {modules,['Elixir.Calculate','Elixir.Lab1.Application',
-                        'Elixir.MySupervisor','Elixir.Request']},
+              {modules,['Elixir.Calculate','Elixir.Forecast',
+                        'Elixir.Lab1.Application','Elixir.MySupervisor',
+                        'Elixir.Request','Elixir.Root']},
               {registered,[]},
               {vsn,"0.1.0"},
               {mod,{'Elixir.Lab1.Application',[]}}]}.
