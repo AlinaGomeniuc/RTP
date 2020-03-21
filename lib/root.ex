@@ -18,56 +18,30 @@ defmodule Root do
     {:ok, {workers, 0}}
   end
 
-  @spec distribute_data(any) :: any
-  def distribute_data(data) do
-      workers = get_workers(Root)
-      id = get_id(Root)
-
-      IO.inspect id
-      IO.inspect elem(workers, id-1)
-      IO.inspect data
-      # elem(workers, id-1) |> Forecast.create_forecast(data)
+  def distribute_data(data, root) do
+      workers = elem(root, 0)
+      id = get_id(root)
+      # IO.inspect elem(workers, id-1)
+      elem(workers, id-1) |> Forecast.create_forecast(data)
+      {elem(root, 0), id}
   end
 
-  @spec get_workers(atom | pid | {atom, any} | {:via, atom, any}) :: any
-  def get_workers(root) do
-    GenServer.call(root, :get_workers)
-  end
-
-  def get_id(root) do
-    GenServer.call(root, :get_id)
-  end
-
-  def get_data(root, data) do
-    GenServer.cast(root, data)
+  def get_data(data, root) do
+    GenServer.cast(data, root)
   end
 
   @impl true
-  def handle_cast(root, data) do
-    distribute_data(data)
-    IO.inspect elem(root, 0)
-    IO.inspect elem(root, 1)
+  def handle_cast(data, root) do
+    root = distribute_data(data, root)
     {:noreply, root}
   end
 
-  @impl true
-  def handle_call(atom, _, root) do
-    cond do
-      atom == :get_workers ->
-        workers = elem(root, 0)
-        {:reply, workers, {workers, elem(root, 1)}}
-
-      atom == :get_id ->
-        id = elem(root, 1)
-
-        if id < tuple_size(elem(root, 0)) do
-          id = id + 1
-          {:reply, id, {elem(root, 0), id}}
-        else
-          id = 1
-          {:reply, id, {elem(root, 0), id}}
-        end
+  def get_id(root)do
+    id = elem(root, 1)
+    id =
+    if id < tuple_size(elem(root, 0)) do
+      id + 1  else  1
     end
+    id
   end
-
 end

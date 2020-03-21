@@ -11,7 +11,6 @@ defmodule Request do
     receive do
         msg ->
             Root.get_data(Root, msg)
-            # Root.distribute_data(msg)
             Process.sleep(100)
     end
     getData()

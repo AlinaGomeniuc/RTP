@@ -10,18 +10,22 @@ defmodule Forecast do
     {:ok, name}
   end
 
-  def handle_cast(_worker, msg) do
-      data = Poison.decode!(msg.data)
-      avgWeather = Calculate.calculateAvg(data)
-      forecast = forecast(avgWeather)
-      Agregator.receive_data(forecast)
+  def handle_cast(data, worker) do
+    IO.inspect "qqqq"
+      # data = Poison.decode!(msg.data)
+      # avgWeather = Calculate.calculateAvg(data)
+      # forecast = forecast(avgWeather)
+      # Agregator.receive_data(forecast)
 
       # IO.inspect avgWeather
-      IO.inspect forecast
+      IO.inspect data
+
+      {:noreply, worker}
   end
 
-  def get_data(request, data) do
-    GenServer.cast(request, data)
+  def create_forecast(worker, data) do
+    GenServer.cast(get_worker(worker), data)
+    # IO.inspect data
   end
 
   def forecast(avgWeather) do
