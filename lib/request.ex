@@ -10,9 +10,9 @@ defmodule Request do
   def getData() do
     receive do
         msg ->
-            # msg = (Poison.decode!(msg.data))
-            Root.distribute_data(msg)
-            # Process.sleep(100)
+            Root.get_data(Root, msg)
+            # Root.distribute_data(msg)
+            Process.sleep(100)
     end
     getData()
   end

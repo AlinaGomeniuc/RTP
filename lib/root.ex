@@ -25,7 +25,8 @@ defmodule Root do
 
       IO.inspect id
       IO.inspect elem(workers, id-1)
-      elem(workers, id-1) |> Forecast.create_forecast(data)
+      IO.inspect data
+      # elem(workers, id-1) |> Forecast.create_forecast(data)
   end
 
   @spec get_workers(atom | pid | {atom, any} | {:via, atom, any}) :: any
@@ -35,6 +36,18 @@ defmodule Root do
 
   def get_id(root) do
     GenServer.call(root, :get_id)
+  end
+
+  def get_data(root, data) do
+    GenServer.cast(root, data)
+  end
+
+  @impl true
+  def handle_cast(root, data) do
+    distribute_data(data)
+    IO.inspect elem(root, 0)
+    IO.inspect elem(root, 1)
+    {:noreply, root}
   end
 
   @impl true
