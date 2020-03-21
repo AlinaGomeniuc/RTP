@@ -18,6 +18,11 @@ defmodule Lab1.Application do
       %{
         id: Root,
         start: {Root, :start_link, [10]},
+      },
+
+      %{
+        id: Agregator,
+        start: {Agregator, :start_link, [5000]},
       }
     ]
 

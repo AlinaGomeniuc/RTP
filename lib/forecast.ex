@@ -2,20 +2,24 @@ defmodule Forecast do
   use GenServer
 
   def start_link(name) do
+  IO.inspect "Starting forecast"
   GenServer.start_link(__MODULE__, [name], name: get_worker(name))
   end
 
   def init(name) do
-    IO.inspect("Starting #{name}")
+    IO.inspect "Starting #{name}"
     {:ok, name}
   end
 
-  def create_forecast(_worker, data) do
-      avgWeather = Calculate.calculateAvg(data)
-      forecast = forecast(avgWeather)
+  def create_forecast(_worker, msg) do
+      data = Poison.decode!(msg.data)
+      IO.inspect data
+      # avgWeather = Calculate.calculateAvg(data)
+      # forecast = forecast(avgWeather)
+      # Agregator.receive_data(forecast)
 
-      IO.inspect avgWeather
-      IO.inspect forecast
+      # IO.inspect avgWeather
+      # IO.inspect forecast
   end
 
   # def handle_cast() do

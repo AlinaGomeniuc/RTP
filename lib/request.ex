@@ -10,12 +10,10 @@ defmodule Request do
   def getData() do
     receive do
         msg ->
-            msg = (Poison.decode!(msg.data))
+            # msg = (Poison.decode!(msg.data))
             Root.distribute_data(msg)
-            # Calculate.calculateAvg(msg)
-            Process.sleep(100)
+            # Process.sleep(100)
     end
     getData()
   end
-
 end
