@@ -13,6 +13,7 @@ defmodule Root do
     Enum.map(fn id ->
       worker = "Worker #{id}"
       MySupervisor.start_child(worker)
+      worker
     end)|> List.to_tuple
 
     {:ok, {workers, 0}}
@@ -21,7 +22,6 @@ defmodule Root do
   def distribute_data(data, root) do
       workers = elem(root, 0)
       id = get_id(root)
-      # IO.inspect elem(workers, id-1)
       elem(workers, id-1) |> Forecast.create_forecast(data)
       {elem(root, 0), id}
   end
