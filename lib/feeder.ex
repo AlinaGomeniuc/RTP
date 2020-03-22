@@ -1,4 +1,4 @@
-defmodule Root do
+defmodule Feeder do
   use GenServer
 
   def start_link(count) do
@@ -23,6 +23,7 @@ defmodule Root do
       workers = elem(root, 0)
       id = get_id(root)
       elem(workers, id-1) |> Forecast.create_forecast(data)
+
       {elem(root, 0), id}
   end
 

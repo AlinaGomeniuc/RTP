@@ -2,9 +2,10 @@
              [{applications,[kernel,stdlib,elixir,logger,poison,
                              eventsource_ex]},
               {description,"lab1"},
-              {modules,['Elixir.Agregator','Elixir.Calculate',
-                        'Elixir.Forecast','Elixir.Lab1.Application',
-                        'Elixir.MySupervisor','Elixir.Request','Elixir.Root']},
+              {modules,['Elixir.Aggregator','Elixir.Calculate',
+                        'Elixir.Feeder','Elixir.Forecast',
+                        'Elixir.Lab1.Application','Elixir.MySupervisor',
+                        'Elixir.Printer','Elixir.Request']},
               {registered,[]},
               {vsn,"0.1.0"},
               {mod,{'Elixir.Lab1.Application',[]}}]}.

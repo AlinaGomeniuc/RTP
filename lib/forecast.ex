@@ -12,14 +12,9 @@ defmodule Forecast do
 
   def handle_cast(data,  worker) do
       data = Poison.decode!(data.data)
-      avgWeather = Calculate.calculateAvg(data)
+      avgWeather = Calculate.calculate_avg(data)
       forecast = forecast(avgWeather)
-      # Agregator.receive_data(forecast)
-
-      IO.inspect worker
-      IO.inspect avgWeather
-      IO.inspect forecast
-
+      Aggregator.receive_data(Aggregator, [forecast, avgWeather])
       {:noreply, worker}
   end
 

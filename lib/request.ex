@@ -10,7 +10,7 @@ defmodule Request do
   def getData() do
     receive do
         msg ->
-            Root.get_data(Root, msg)
+            Feeder.get_data(Feeder, msg)
             Process.sleep(100)
     end
     getData()
