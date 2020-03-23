@@ -32,29 +32,34 @@ defmodule Feeder do
     worker_id = generate_worker_id(feeder_state)
     elem(workers, worker_id-1) |> Forecast.process_event(event)
     event_count = elem(feeder_state, 2) + 1
-    total_workers = Registry.count(:workers_registry)
+    # total_workers = Registry.count(:workers_registry)
+    # tuple_size(workers)
 
-    IO.inspect event_count
-    IO.inspect feeder_state
-    IO.inspect "-----------------"
-    {:noreply, {elem(feeder_state, 0), total_workers, event_count}}
+    {:noreply, {elem(feeder_state, 0), tuple_size(workers), event_count}}
   end
 
   @impl true
   def handle_info(:check_events, feeder_state) do
     workers = elem(feeder_state, 0)
     event_count = elem(feeder_state, 2)
-
+    total_workers = tuple_size(workers)
     required_worker_nr = get_required_nr_workers(event_count)
 
-    # workers =
-    #   if required_worker_nr > total_workers do
-    #     add_worker(workers, required_worker_nr, total_workers)
-    #   end
+    workers = cond do
+      required_worker_nr > total_workers ->
+        add_worker(workers, required_worker_nr, total_workers)
 
-    total_workers = Registry.count(:workers_registry)
+      required_worker_nr < total_workers ->
+        delete_worker(workers, required_worker_nr, total_workers)
+
+      true -> restart_workers(workers)
+      end
+
+      IO.inspect "////////////////////////////////////////"
       IO.inspect event_count
-      IO.inspect feeder_state
+      IO.inspect workers
+
+      Process.send_after(self(), :check_events, 500)
       {:noreply, {workers, total_workers, 0}}
   end
 
@@ -88,14 +93,52 @@ defmodule Feeder do
   defp add_worker(workers, required_worker_nr, workers_count) do
     list_workers = Tuple.to_list(workers)
 
-   new_workers = workers_count+1 .. required_worker_nr |>
+    new_workers = workers_count+1 .. required_worker_nr |>
     Enum.map(fn id ->
       worker = "Worker #{id}"
+      IO.inspect "started #{worker}"
       MySupervisor.start_child(worker)
       worker
     end)
 
+    IO.inspect "din start"
+
     new_workers = Enum.reverse(new_workers)
-    list_workers ++ new_workers |> List.to_tuple
+    list_workers ++ new_workers |> List.to_tuple |> IO.inspect
+  end
+
+  defp delete_worker(workers, required_worker_nr, workers_count) do
+    list_workers = Tuple.to_list(workers)
+
+    required_worker_nr+1 .. workers_count |>
+    Enum.map(fn id ->
+      worker = "Worker #{id}"
+      List.delete(list_workers, worker)
+      worker_registry = Registry.lookup(:workers_registry, worker)
+      if (length(worker_registry) > 0) do
+        IO.inspect "deleted #{worker}"
+        hd(worker_registry) |> elem(0) |>
+        MySupervisor.delete_child
+      end
+    end)
+    IO.inspect "din delete"
+    new_workers = Enum.slice(list_workers, 0, required_worker_nr)
+    IO.inspect new_workers
+    new_workers
+  end
+
+  defp restart_workers(workers) do
+    # list_workers = Tuple.to_list(workers)
+    IO.inspect "din restart"
+    IO.inspect workers
+    workers = Enum.map(tuple_size(workers), fn id ->
+      worker = "Worker #{id}"
+      IO.inspect "restarted #{worker}"
+      worker_registry = Registry.lookup(:workers_registry, worker)
+      if (length(worker_registry) == 0) do
+        MySupervisor.start_child(worker)
+      end
+    end)
+    workers
   end
 end

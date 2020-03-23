@@ -11,7 +11,7 @@ defmodule Request do
     receive do
         event ->
             Feeder.send_event(Feeder, event)
-            Process.sleep(100)
+            # Process.sleep(100)
     end
     getData()
   end
