@@ -5,9 +5,13 @@ defmodule Feeder do
     GenServer.start_link(__MODULE__, count, name: __MODULE__)
   end
 
+  def send_event(feeder_pid, event) do
+    GenServer.cast(feeder_pid, {:send_event, event})
+  end
+
   @impl true
   def init(count) do
-    IO.inspect "Root starts #{count} workers"
+    IO.inspect "Feeder starts #{count} workers"
 
     workers = 1..count |>
     Enum.map(fn id ->
@@ -16,33 +20,23 @@ defmodule Feeder do
       worker
     end)|> List.to_tuple
 
-    {:ok, {workers, 0}}
-  end
+    id = 0
 
-  def distribute_data(data, root) do
-      workers = elem(root, 0)
-      id = get_id(root)
-      elem(workers, id-1) |> Forecast.create_forecast(data)
-
-      {elem(root, 0), id}
-  end
-
-  def get_data(data, root) do
-    GenServer.cast(data, root)
+    {:ok, {workers, id}}
   end
 
   @impl true
-  def handle_cast(data, root) do
-    root = distribute_data(data, root)
-    {:noreply, root}
+  def handle_cast({:send_event, event}, feeder_state) do
+    workers = elem(feeder_state, 0)
+    id = generate_id(feeder_state)
+    elem(workers, id-1) |> Forecast.process_event(event)
+
+    {:noreply, {elem(feeder_state, 0), id}}
   end
 
-  def get_id(root)do
-    id = elem(root, 1)
-    id =
-    if id < tuple_size(elem(root, 0)) do
-      id + 1  else  1
-    end
+  defp generate_id(state)do
+    id = elem(state, 1)
+    id = if id < tuple_size(elem(state, 0)) do id + 1  else  1 end
     id
   end
 end

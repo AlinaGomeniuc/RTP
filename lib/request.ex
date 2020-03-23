@@ -9,8 +9,8 @@ defmodule Request do
 
   def getData() do
     receive do
-        msg ->
-            Feeder.get_data(Feeder, msg)
+        event ->
+            Feeder.send_event(Feeder, event)
             Process.sleep(100)
     end
     getData()

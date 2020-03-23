@@ -5,22 +5,25 @@ defmodule Forecast do
   GenServer.start_link(__MODULE__, [name], name: get_worker(name))
   end
 
+  def process_event(worker, event) do
+    GenServer.cast(get_worker(worker), {:process_event, event})
+  end
+
+  @impl true
   def init(name) do
     IO.inspect "Starting #{name}"
+
     {:ok, name}
   end
 
-  def handle_cast(data,  worker) do
-      data = Poison.decode!(data.data)
-      avgWeather = Calculate.calculate_avg(data)
-      forecast = forecast(avgWeather)
-      Aggregator.receive_data(Aggregator, [forecast, avgWeather])
-      {:noreply, worker}
-  end
+  @impl true
+  def handle_cast({:process_event, event}, forecast_worker_state) do
+      data = Poison.decode!(event.data)
+      avg_sensor_data = Calculate.calculate_sensor_avg(data)
+      forecast = forecast(avg_sensor_data)
+      Aggregator.send_forecast(Aggregator, [forecast, avg_sensor_data])
 
-  @spec create_forecast(any, any) :: :ok
-  def create_forecast(worker, data) do
-    GenServer.cast(get_worker(worker), data)
+      {:noreply, forecast_worker_state}
   end
 
   def forecast(avgWeather) do
@@ -29,6 +32,7 @@ defmodule Forecast do
     light = avgWeather["light"]
     wind = avgWeather["wind_speed"]
     humidity = avgWeather["humidity"]
+
     cond do
       temperature < -2 && light < 128 && pressure < 720 -> "SNOW"
       temperature < -2 && light > 128 && pressure < 680 -> "WET_SNOW"
@@ -49,5 +53,4 @@ defmodule Forecast do
   defp get_worker(name) do
     {:via, Registry, {:workers_registry, name}}
   end
-
 end

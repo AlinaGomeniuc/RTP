@@ -1,5 +1,5 @@
 defmodule Calculate do
-  def calculate_avg(msg) do
+  def calculate_sensor_avg(msg) do
     data = msg["message"]
     |> get_tuple()
     |> get_map_list()
@@ -56,6 +56,11 @@ defmodule Calculate do
   def sum_data(list, key)do
     Enum.map(list, fn (x) -> x[key] end)|>
     Enum.sum
+  end
+
+  def last_element(list, key)do
+    Enum.map(list, fn (x) -> x[key] end)|>
+    Enum.max()
   end
 
 end
