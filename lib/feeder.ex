@@ -35,7 +35,12 @@ defmodule Feeder do
     # total_workers = Registry.count(:workers_registry)
     # tuple_size(workers)
 
-    {:noreply, {elem(feeder_state, 0), tuple_size(workers), event_count}}
+    # new_workers = restart_workers(workers)
+    # IO.inspect workers
+    # IO.inspect "[[[[[[[[[[[[[[[[[[[[[[["
+    # IO.inspect new_workers
+
+    {:noreply, {workers, tuple_size(workers), event_count}}
   end
 
   @impl true
@@ -103,8 +108,8 @@ defmodule Feeder do
 
     IO.inspect "din start"
 
-    new_workers = Enum.reverse(new_workers)
-    list_workers ++ new_workers |> List.to_tuple |> IO.inspect
+    # new_workers = Enum.reverse(new_workers)
+    list_workers ++ new_workers |> List.to_tuple
   end
 
   defp delete_worker(workers, required_worker_nr, workers_count) do
@@ -124,14 +129,14 @@ defmodule Feeder do
     IO.inspect "din delete"
     new_workers = Enum.slice(list_workers, 0, required_worker_nr)
     IO.inspect new_workers
-    new_workers
+    new_workers|> List.to_tuple
   end
 
   defp restart_workers(workers) do
     # list_workers = Tuple.to_list(workers)
     IO.inspect "din restart"
     IO.inspect workers
-    workers = Enum.map(tuple_size(workers), fn id ->
+    workers = Enum.map(workers, fn id ->
       worker = "Worker #{id}"
       IO.inspect "restarted #{worker}"
       worker_registry = Registry.lookup(:workers_registry, worker)
