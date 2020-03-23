@@ -10,7 +10,6 @@ defmodule Request do
   def getData() do
     receive do
         event ->
-          IO.puts "alina"
             Feeder.send_event(Feeder, event)
             # Process.sleep(100)
     end

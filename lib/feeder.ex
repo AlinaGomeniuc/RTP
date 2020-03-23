@@ -146,7 +146,7 @@ defmodule Feeder do
       if (length(worker_registry) == 0) do
         MySupervisor.start_child(worker)
       end
-    end)
-    workers |> List.to_tuple
+    end) |> List.to_tuple |> Enum.unzip |> elem(1)
+    workers
   end
 end
