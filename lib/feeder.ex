@@ -76,11 +76,11 @@ defmodule Feeder do
 
   defp get_required_nr_workers(event_counter) do
     cond do
-      event_counter < 10 -> 1
-      event_counter > 10 && event_counter <= 30 -> 2
-      event_counter > 30 && event_counter <= 50 -> 4
-      event_counter > 50 && event_counter <= 70 -> 6
-      event_counter > 70 && event_counter <= 100 -> 8
+      event_counter < 10 -> 5
+      event_counter > 10 && event_counter <= 30 -> 8
+      event_counter > 30 && event_counter <= 50 -> 12
+      event_counter > 50 && event_counter <= 70 -> 30
+      event_counter > 70 && event_counter <= 100 -> 40
       event_counter > 100 && event_counter <= 130 -> 11
       event_counter > 130 && event_counter <= 150 -> 14
       event_counter > 150 && event_counter <= 170 -> 16
@@ -108,8 +108,10 @@ defmodule Feeder do
 
     IO.inspect "din start"
 
-    # new_workers = Enum.reverse(new_workers)
-    list_workers ++ new_workers |> List.to_tuple
+    a =  list_workers ++ new_workers |> List.to_tuple
+
+    IO.inspect a
+    a
   end
 
   defp delete_worker(workers, required_worker_nr, workers_count) do
@@ -128,15 +130,16 @@ defmodule Feeder do
     end)
     IO.inspect "din delete"
     new_workers = Enum.slice(list_workers, 0, required_worker_nr)
-    IO.inspect new_workers
-    new_workers|> List.to_tuple
+    b = new_workers|> List.to_tuple
+    IO.inspect b
+
   end
 
   defp restart_workers(workers) do
-    # list_workers = Tuple.to_list(workers)
+    list_workers = Tuple.to_list(workers)
     IO.inspect "din restart"
     IO.inspect workers
-    workers = Enum.map(workers, fn id ->
+    workers = Enum.map(list_workers, fn id ->
       worker = "Worker #{id}"
       IO.inspect "restarted #{worker}"
       worker_registry = Registry.lookup(:workers_registry, worker)
@@ -144,6 +147,6 @@ defmodule Feeder do
         MySupervisor.start_child(worker)
       end
     end)
-    workers
+    workers |> List.to_tuple
   end
 end
