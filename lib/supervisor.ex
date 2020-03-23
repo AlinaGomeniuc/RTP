@@ -6,7 +6,7 @@ defmodule MySupervisor do
 
   @impl true
   def init(_) do
-    IO.inspect "Dynamic Supervisor"
+    IO.inspect "Starting Dynamic Supervisor"
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
@@ -14,8 +14,13 @@ defmodule MySupervisor do
     children = %{
       id: Forecast,
       start: {Forecast, :start_link, [name]},
+      restart: :temporary
     }
 
     DynamicSupervisor.start_child(__MODULE__,children)
+  end
+
+  def delete_child(name) do
+    DynamicSupervisor.terminate_child(__MODULE__, name)
   end
 end
