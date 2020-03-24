@@ -25,6 +25,11 @@ defmodule Forecast do
       {:noreply, forecast_worker_state}
   end
 
+  @impl true
+  def terminate(_reason, _state) do
+    DynamicSupervisor.terminate_child(MySupervisor, self())
+  end
+
   defp forecast(avgWeather) do
     pressure = avgWeather["atmo_pressure"]
     temperature = avgWeather["temperature"]

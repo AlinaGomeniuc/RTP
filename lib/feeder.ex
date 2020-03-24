@@ -46,17 +46,6 @@ defmodule Feeder do
     total_workers = tuple_size(workers)
     required_worker_nr = get_required_nr_workers(event_count)
 
-    # IO.puts("////////////////////////////")
-    # IO.puts("Processed events: #{event_count}")
-
-    # IO.puts("Required nr of workers: #{required_worker_nr}")
-    # number_of_workers_before = tuple_size(workers)
-    # IO.puts("Number of workers before: #{number_of_workers_before}")
-    # number_of_supervisor_children_before =
-    #   DynamicSupervisor.which_children(MySupervisor) |>
-    #   length
-    # IO.puts("Number of supervisor children before: #{number_of_supervisor_children_before}")
-
     workers = restart_workers(workers)
 
     workers = cond do
