@@ -20,6 +20,7 @@ defmodule Printer do
   @impl true
   def init(_) do
     is_printed = false
+
     {:ok, is_printed}
   end
 
@@ -58,12 +59,14 @@ defmodule Printer do
   @impl true
   def handle_cast(:stop_print, _printer_state) do
     printer_state = false
+
     {:noreply, printer_state}
   end
 
   @impl true
   def handle_cast(:start_print, _printer_state) do
     printer_state = true
+
     {:noreply, printer_state}
   end
 end

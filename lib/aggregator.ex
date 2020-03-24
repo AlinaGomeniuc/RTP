@@ -15,7 +15,6 @@ defmodule Aggregator do
 
   @impl true
   def init(collect_interval) do
-    IO.inspect "Starting Aggregator"
     Process.send_after(self(), :send_forecast, collect_interval)
 
     {:ok, {[], collect_interval}}

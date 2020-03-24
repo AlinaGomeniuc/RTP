@@ -11,8 +11,6 @@ defmodule Feeder do
 
   @impl true
   def init(worker_count) do
-    IO.inspect "Feeder starts #{worker_count} workers"
-
     workers = 1..worker_count |>
     Enum.map(fn id ->
       worker = "Worker #{id}"
@@ -59,6 +57,7 @@ defmodule Feeder do
       end
 
       Process.send_after(self(), :check_events, 500)
+
       {:noreply, {workers, worker_id, 0}}
   end
 
@@ -95,7 +94,6 @@ defmodule Feeder do
     new_workers = workers_count+1 .. required_worker_nr |>
     Enum.map(fn id ->
       worker = "Worker #{id}"
-      # IO.inspect "started #{worker}"
       MySupervisor.start_child(worker)
       worker
     end)
@@ -112,7 +110,6 @@ defmodule Feeder do
       List.delete(list_workers, worker)
       worker_registry = Registry.lookup(:workers_registry, worker)
       if (length(worker_registry) > 0) do
-        # IO.inspect "deleted #{worker}"
         hd(worker_registry) |> elem(0) |>
         MySupervisor.delete_child
       end

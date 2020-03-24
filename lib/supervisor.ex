@@ -6,7 +6,6 @@ defmodule MySupervisor do
 
   @impl true
   def init(_) do
-    IO.inspect "Starting Dynamic Supervisor"
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 

@@ -1,16 +1,23 @@
 defmodule User_Input do
   def start_link do
-    IO.inspect "For updating the interval of collected data press u"
-    IO.inspect "Default it is 1 second"
-    pid = spawn_link(__MODULE__, :get_user_input, [])
-    Printer.start_printing(Printer)
+    IO.puts "For updating the interval of collected data press u"
+    IO.puts "Default interval is 1 second"
+    pid = spawn_link(__MODULE__, :start, [])
 
     {:ok, pid}
   end
 
+  def start() do
+    IO.puts "Press enter to start"
+    user_input = IO.gets("")
+    if user_input === "\n" do
+      Printer.start_printing(Printer)
+      get_user_input()
+    end
+  end
+
   def get_user_input do
     user_input = IO.gets("")
-
     if user_input === "u\n" do
       Printer.stop_printing(Printer)
       seconds =
