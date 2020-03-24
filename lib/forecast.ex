@@ -11,8 +11,7 @@ defmodule Forecast do
 
   @impl true
   def init(name) do
-    IO.inspect "Starting #{name}"
-
+    # IO.inspect "Starting #{name}"
     {:ok, name}
   end
 
@@ -26,7 +25,7 @@ defmodule Forecast do
       {:noreply, forecast_worker_state}
   end
 
-  def forecast(avgWeather) do
+  defp forecast(avgWeather) do
     pressure = avgWeather["atmo_pressure"]
     temperature = avgWeather["temperature"]
     light = avgWeather["light"]

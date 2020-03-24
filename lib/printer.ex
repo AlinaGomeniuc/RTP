@@ -5,18 +5,27 @@ defmodule Printer do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  @spec print_forcast(atom | pid | {atom, any} | {:via, atom, any}, any) :: :ok
   def print_forcast(printer_pid, data) do
     GenServer.cast(printer_pid, {:print_forcast, data})
   end
 
+  def stop_printing(printer_pid) do
+    GenServer.cast(printer_pid, :stop_print)
+  end
+
+  def start_printing(printer_pid) do
+    GenServer.cast(printer_pid, :start_print)
+  end
+
   @impl true
   def init(_) do
-    {:ok, {}}
+    is_printed = false
+    {:ok, is_printed}
   end
 
   @impl true
   def handle_cast({:print_forcast, data}, printer_state) do
+   if printer_state do
     forcast = elem(data, 0)
     sensors_data = elem(data, 1)
 
@@ -30,7 +39,7 @@ defmodule Printer do
                                          |> DateTime.add(7200, :second)
 
     IO.puts ("=================================")
-    IO.puts ("Date: #{timestamp.day}.#{timestamp.month}.#{timestamp.year} | Time: #{timestamp.hour}:#{timestamp.minute}:#{timestamp.second}")
+    IO.puts ("Date: #{timestamp.day}/#{timestamp.month}/#{timestamp.year} | Time: #{timestamp.hour}:#{timestamp.minute}:#{timestamp.second}")
     IO.puts ("---------------------------------")
     IO.puts ("IT'S #{forcast} OUTSIDE")
     IO.puts ("---------------------------------")
@@ -41,7 +50,20 @@ defmodule Printer do
     IO.puts ("Wind: #{wind}")
     IO.puts ("=================================")
     IO.puts ("")
+   end
 
+    {:noreply, printer_state}
+  end
+
+  @impl true
+  def handle_cast(:stop_print, _printer_state) do
+    printer_state = false
+    {:noreply, printer_state}
+  end
+
+  @impl true
+  def handle_cast(:start_print, _printer_state) do
+    printer_state = true
     {:noreply, printer_state}
   end
 end

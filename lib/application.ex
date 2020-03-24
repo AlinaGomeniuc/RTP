@@ -22,12 +22,17 @@ defmodule Lab1.Application do
 
       %{
         id: Aggregator,
-        start: {Aggregator, :start_link, []},
+        start: {Aggregator, :start_link, [1000]},
       },
 
       %{
         id: Printer,
         start: {Printer, :start_link, []},
+      },
+
+      %{
+        id: User_Input,
+        start: {User_Input, :start_link, []}
       }
     ]
 

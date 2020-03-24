@@ -5,7 +5,8 @@
               {modules,['Elixir.Aggregator','Elixir.Calculate',
                         'Elixir.Feeder','Elixir.Forecast',
                         'Elixir.Lab1.Application','Elixir.MySupervisor',
-                        'Elixir.Printer','Elixir.Request']},
+                        'Elixir.Printer','Elixir.Request',
+                        'Elixir.User_Input']},
               {registered,[]},
               {vsn,"0.1.0"},
               {mod,{'Elixir.Lab1.Application',[]}}]}.
